@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import pathlib
+import random
 import pytest
 
 from framework.config import load_config
@@ -10,9 +12,9 @@ from framework.metrics import push_metrics, set_current_test_name
 from framework.api.httpbin_api import HttpBinApi
 
 try:
-    import pika
-except Exception:
-    pika = None
+    import allure
+except Exception:  # pragma: no cover
+    allure = None
 
 
 @pytest.fixture(scope="session")
