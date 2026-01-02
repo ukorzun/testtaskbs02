@@ -1,0 +1,20 @@
+{
+  "args": {
+    "n": "3704",
+    "token": "52geEimbkCyA"
+  },
+  "data": "",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Host": "httpbin",
+    "User-Agent": "testtaskbs01/0.3"
+  },
+  "json": null,
+  "method": "GET",
+  "origin": "172.18.0.7",
+  "url": "http://httpbin/anything?token=52geEimbkCyA&n=3704"
+}

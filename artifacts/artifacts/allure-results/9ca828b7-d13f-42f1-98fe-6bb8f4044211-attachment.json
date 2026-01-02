@@ -1,0 +1,21 @@
+{
+  "args": {
+    "reserved": "!*'();:@&=+$,/?#[]",
+    "space": "a b",
+    "unicode": "Zażółć gęślą jaźń"
+  },
+  "data": "",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Host": "httpbin",
+    "User-Agent": "testtaskbs01/0.3"
+  },
+  "json": null,
+  "method": "GET",
+  "origin": "172.18.0.7",
+  "url": "http://httpbin/anything?space=a+b&unicode=Zażółć+gęślą+jaźń&reserved=!*'()%3B%3A%40%26%3D%2B%24%2C%2F%3F%23[]"
+}

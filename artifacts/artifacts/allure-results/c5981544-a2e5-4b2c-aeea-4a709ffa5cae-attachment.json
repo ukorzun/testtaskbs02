@@ -1,0 +1,5 @@
+{
+  "reserved": "!*'();:@&=+$,/?#[]",
+  "space": "a b",
+  "unicode": "Zażółć gęślą jaźń"
+}

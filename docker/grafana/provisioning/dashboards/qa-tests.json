@@ -1,0 +1,42 @@
+{
+  "uid": "qa-tests",
+  "title": "QA Tests - Metrics",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": {"from": "now-15m", "to": "now"},
+  "tags": ["qa", "tests"],
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Test duration p95 (seconds)",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "-"},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum(rate(test_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "p95",
+          "instant": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Retry attempts rate (per second)",
+      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 9},
+      "datasource": {"type": "prometheus", "uid": "-"},
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(test_retries_total[5m]))",
+          "legendFormat": "retries/s",
+          "instant": false
+        }
+      ]
+    }
+  ]
+}

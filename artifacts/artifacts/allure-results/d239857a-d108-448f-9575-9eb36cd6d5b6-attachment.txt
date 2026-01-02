@@ -1,0 +1,3 @@
+WARNING  framework.retry:retry.py:65 Attempt 1/3 failed in 3.5 ms: Retryable HTTP 503 for http://httpbin:80/status/503. Body preview:  | next retry in 0.40 s
+WARNING  framework.retry:retry.py:65 Attempt 2/3 failed in 7.9 ms: Retryable HTTP 503 for http://httpbin:80/status/503. Body preview:  | next retry in 0.80 s
+ERROR    framework.retry:retry.py:63 Attempt 3/3 failed in 21.7 ms (giving up): Retryable HTTP 503 for http://httpbin:80/status/503. Body preview:

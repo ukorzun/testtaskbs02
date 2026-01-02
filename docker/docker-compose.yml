@@ -1,0 +1,69 @@
+services:
+  httpbin:
+    image: kennethreitz/httpbin
+    platform: linux/amd64
+    ports:
+      - "8080:80"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - "9091:9091"
+
+  prometheus:
+    build:
+      context: ./prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      pushgateway:
+        condition: service_started
+
+  grafana:
+    build:
+      context: ./grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  tests:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.tests
+    depends_on:
+      httpbin:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      pushgateway:
+        condition: service_started
+    environment:
+      BASE_URL: http://httpbin:80
+      METRICS_ENABLED: "true"
+      PUSHGATEWAY_URL: http://pushgateway:9091
+      METRICS_JOB_NAME: qa_tests
+      AMQP_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      AMQP_QUEUE: qa.events
+      RUN_INTEGRATION: "true"
+    volumes:
+      - artifacts:/app/artifacts
+
+volumes:
+  artifacts:

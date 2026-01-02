@@ -1,0 +1,18 @@
+service:
+  base_url: "https://httpbin.org"
+  timeout_s: 10
+
+retry:
+  attempts: 3
+  backoff_s: 0.4
+  backoff_multiplier: 2.0
+  retry_on_statuses: [429, 500, 502, 503, 504]
+
+reporting:
+  allure_results_dir: "artifacts/allure-results"
+  html_report_path: "artifacts/report.html"
+
+metrics:
+  enabled: true
+  pushgateway_url: "http://pushgateway:9091"
+  job_name: "httpbin_tests"

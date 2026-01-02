@@ -1,0 +1,24 @@
+{
+  "args": {},
+  "data": "{\"name\": \"Jason Henderson\", \"email\": \"lmoses@example.org\", \"city\": \"Williamfort\", \"user_id\": 4887026}",
+  "files": {},
+  "form": {},
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Content-Length": "101",
+    "Content-Type": "application/json",
+    "Host": "httpbin",
+    "User-Agent": "testtaskbs01/0.3"
+  },
+  "json": {
+    "city": "Williamfort",
+    "email": "lmoses@example.org",
+    "name": "Jason Henderson",
+    "user_id": 4887026
+  },
+  "method": "POST",
+  "origin": "172.18.0.7",
+  "url": "http://httpbin/anything"
+}

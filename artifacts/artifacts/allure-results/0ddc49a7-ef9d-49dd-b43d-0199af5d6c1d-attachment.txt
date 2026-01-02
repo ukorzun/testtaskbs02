@@ -1,0 +1,11 @@
+ERROR    pika.adapters.utils.io_services_utils:io_services_utils.py:349 Socket failed to connect: <socket.socket fd=15, family=2, type=1, proto=6, laddr=('172.18.0.7', 43336)>; error=111 (Connection refused)
+ERROR    pika.adapters.utils.connection_workflow:connection_workflow.py:375 TCP Connection attempt failed: ConnectionRefusedError(111, 'Connection refused'); dest=(<AddressFamily.AF_INET: 2>, <SocketKind.SOCK_STREAM: 1>, 6, '', ('172.18.0.2', 5672))
+ERROR    pika.adapters.utils.connection_workflow:connection_workflow.py:291 AMQPConnector - reporting failure: AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused')
+ERROR    pika.adapters.utils.connection_workflow:connection_workflow.py:746 AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None.
+ERROR    pika.adapters.utils.connection_workflow:connection_workflow.py:723 AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+ERROR    pika.adapters.blocking_connection:blocking_connection.py:450 Connection workflow failed: AMQPConnectionWorkflowFailed: 1 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, 'Connection refused'); first exception - None
+ERROR    pika.adapters.blocking_connection:blocking_connection.py:457 Error in _create_connection().
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/pika/adapters/blocking_connection.py", line 451, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.AMQPConnectionError

@@ -1,0 +1,9 @@
+{
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Origin": "*",
+  "Connection": "keep-alive",
+  "Content-Length": "3741",
+  "Content-Type": "text/html; charset=utf-8",
+  "Date": "Fri, 02 Jan 2026 14:46:18 GMT",
+  "Server": "gunicorn/19.9.0"
+}

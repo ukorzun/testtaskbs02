@@ -1,0 +1,9 @@
+{
+  "Access-Control-Allow-Credentials": "true",
+  "Access-Control-Allow-Origin": "*",
+  "Connection": "keep-alive",
+  "Content-Length": "354",
+  "Content-Type": "application/json",
+  "Date": "Fri, 02 Jan 2026 14:23:12 GMT",
+  "Server": "gunicorn/19.9.0"
+}

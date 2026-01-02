@@ -1,0 +1,22 @@
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {
+    "a": "1",
+    "b": "2"
+  },
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
+    "Content-Length": "7",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Host": "httpbin",
+    "User-Agent": "testtaskbs01/0.3"
+  },
+  "json": null,
+  "method": "POST",
+  "origin": "172.18.0.7",
+  "url": "http://httpbin/anything"
+}

@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "QA"
+    orgId: 1
+    folder: "QA"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

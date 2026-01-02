@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt && \
+    pip install --no-cache-dir "pika>=1.3.2"
+
+COPY . /app
+
+ENV PYTHONPATH=/app
+ENV BASE_URL=http://httpbin:80
+ENV AMQP_URL=amqp://guest:guest@rabbitmq:5672/%2F
+ENV AMQP_QUEUE=qa.events
+ENV PUSHGATEWAY_URL=http://pushgateway:9091
+ENV METRICS_ENABLED=true
+ENV METRICS_JOB_NAME=qa_tests
+ENV RUN_INTEGRATION=true
+
+CMD ["python", "-c", "import os,time,urllib.request,subprocess\nbase=os.getenv('BASE_URL','http://httpbin:80')\npush=os.getenv('PUSHGATEWAY_URL','http://pushgateway:9091')\nchecks=[(base+'/status/200','httpbin'),(push+'/-/ready','pushgateway')]\ndeadline=time.time()+180\nwhile time.time()<deadline:\n    ok=True\n    for url,_ in checks:\n        try:\n            with urllib.request.urlopen(url,timeout=3) as r:\n                if r.status>=400: raise RuntimeError(r.status)\n        except Exception:\n            ok=False; break\n    if ok: break\n    time.sleep(2)\nelse:\n    raise SystemExit('Deps not ready in time')\nsubprocess.check_call(['pytest','--alluredir=artifacts/allure-results','--html=artifacts/report.html','--self-contained-html'])"]
