@@ -17,23 +17,20 @@ except Exception:  # pragma: no cover
     AMQPConnectionError = Exception
 
 
-# Only pytest marker here. Allure labels should be set via allure.* decorators, not pytest marks.
 pytestmark = pytest.mark.integration
 
 
 def _connect(amqp_url: str, attempts: int = 5, delay_s: float = 1.0):
-    """Connect to RabbitMQ with retries and sane timeouts for CI/docker."""
     if pika is None:
         raise RuntimeError("pika is not installed")
 
     params = pika.URLParameters(amqp_url)
 
-    # Stability knobs:
-    params.connection_attempts = 1  # we implement our own retry loop
+    params.connection_attempts = 1
     params.retry_delay = 0
     params.socket_timeout = float(os.getenv("AMQP_SOCKET_TIMEOUT_S", "5"))
     params.blocked_connection_timeout = float(os.getenv("AMQP_BLOCKED_TIMEOUT_S", "10"))
-    params.heartbeat = int(os.getenv("AMQP_HEARTBEAT_S", "0"))  # 0 disables heartbeats for short tests
+    params.heartbeat = int(os.getenv("AMQP_HEARTBEAT_S", "0"))
 
     last = None
     for i in range(1, attempts + 1):
@@ -44,7 +41,7 @@ def _connect(amqp_url: str, attempts: int = 5, delay_s: float = 1.0):
             if i == attempts:
                 raise
             time.sleep(delay_s)
-    raise last  # pragma: no cover
+    raise last
 
 
 @allure.story("Messaging integration")
@@ -52,14 +49,6 @@ def _connect(amqp_url: str, attempts: int = 5, delay_s: float = 1.0):
 @allure.label("layer", "integration")
 @allure.title("Bonus: RabbitMQ publish/consume roundtrip")
 def test_publish_and_consume_rabbitmq():
-    """Publishes a message and consumes it within the test.
-
-    Run:
-      pip install -r requirements-messaging.txt
-      docker compose -f docker/docker-compose.yml up -d rabbitmq
-      export AMQP_URL="amqp://guest:guest@localhost:5672/%2F"
-      pytest -m integration
-    """
     if pika is None:
         pytest.skip("pika is not installed. Install requirements-messaging.txt to run integration tests.")
 
@@ -82,7 +71,6 @@ def test_publish_and_consume_rabbitmq():
     with allure.step("Publish message"):
         ch.basic_publish(exchange="", routing_key=queue, body=body)
 
-    # Consume with a short polling loop (more robust than a single basic_get)
     deadline = time.time() + 5
     got = None
     with allure.step("Consume message"):

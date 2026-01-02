@@ -13,7 +13,7 @@ from framework.api.httpbin_api import HttpBinApi
 
 try:
     import allure
-except Exception:  # pragma: no cover
+except Exception:
     allure = None
 
 
@@ -30,11 +30,6 @@ def _logging():
 
 @pytest.fixture(scope="session", autouse=True)
 def test_seed():
-    """Reproducibility seed for random/Faker.
-
-    - If TEST_SEED is not set, a random seed is generated and attached to Allure.
-    - Set TEST_SEED to reproduce the same randomized data.
-    """
     seed_raw = os.getenv("TEST_SEED")
     seed = int(seed_raw) if seed_raw else random.randint(1, 2_000_000_000)
     random.seed(seed)
@@ -63,7 +58,6 @@ def api(client) -> HttpBinApi:
 
 @pytest.fixture(autouse=True)
 def _current_test(request):
-    # Use nodeid for uniqueness across parametrization.
     set_current_test_name(request.node.nodeid)
     yield
 

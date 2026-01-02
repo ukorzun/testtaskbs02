@@ -19,11 +19,6 @@ allure.dynamic.suite("Smoke")
     "application/xml",
 ])
 def test_anything_reflects_accept_header(api, accept):
-    """httpbin /anything is an echo endpoint and returns JSON.
-
-    It may NOT content-negotiate Content-Type based on Accept.
-    Instead, it returns JSON that includes the request headers.
-    """
     with track_test_duration("test_anything_reflects_accept_header"):
         with allure.step("GET /anything with Accept header"):
             r = api.anything_get(accept=accept)
@@ -42,5 +37,4 @@ def test_html_endpoint_returns_html(client):
             r = client.get("/html", headers={"Accept": "text/html"})
         assert r.status_code == 200
         assert "text/html" in r.headers.get("Content-Type", "")
-        # basic sanity check that it's HTML
         assert "<html" in r.text.lower()

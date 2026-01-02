@@ -15,7 +15,6 @@ allure.dynamic.suite("Resilience")
 @allure.story("Resilience & retry policy")
 @allure.title("QA Platform: Retry on 503 respects attempts")
 def test_retry_on_503_respects_attempts(client, cfg, monkeypatch):
-    """QA check: framework retry policy is enforced (attempt count)."""
     calls = {"n": 0}
     real = client.session.request
 
@@ -35,7 +34,6 @@ def test_retry_on_503_respects_attempts(client, cfg, monkeypatch):
 @allure.story("Resilience & retry policy")
 @allure.title("QA Platform: No retry on 404")
 def test_no_retry_on_404(client, monkeypatch):
-    """QA check: non-retryable statuses should not be retried."""
     calls = {"n": 0}
     real = client.session.request
 
