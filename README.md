@@ -1,167 +1,72 @@
-# testtaskbs01
+# QA Automation Test Framework
 
-This repo implements a **senior-grade API automation framework** in Python (**pytest**) against `httpbin`.
+## Stack
+- Python + pytest
+- Allure / HTML reports
+- RabbitMQ
+- Docker Compose
+- Prometheus + Grafana
 
-Covers (base scope):
+## Target API
+https://httpbin.org/
+
+## Covered Scope
 - Response formats
 - Request inspection
-- Dynamic data
-- Config support via **YAML + optional .env overrides**
-- **Custom retry decorator** with attempt-by-attempt logging
-- Randomized test data via **Faker**
-- Reporting via **Allure** and **HTML** (pytest-html), generated automatically in CI
+- Dynamic / randomized data
+- Messaging integration (RabbitMQ publish → consume)
+- Retry logic with detailed logging
+- Metrics & observability
 
-Bonus tracks included:
-- RabbitMQ messaging test (publish + consume)
-- Dockerized environment (`docker-compose`) with healthchecks (no sleeps)
-- Observability: Prometheus + Pushgateway + Grafana dashboard (retries + p95 duration)
-
----
-
-## Project structure
-
-- `framework/` – reusable test framework (config, http client, retry, data gen, metrics)
-- `tests/` – pytest tests grouped by assignment topics
-- `config/config.yaml` – defaults
-- `.env.example` – optional overrides
-- `docker/` – bonus docker-compose + monitoring stack
-- `artifacts/` – test reports output folder (created automatically)
-
----
-
-## Local setup
-
-### 1) Install
-
+## Run environment
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-python -m pip install -U pip
-pip install -r requirements.txt
+docker compose up -d --build
 ```
 
-Optional (bonus messaging test):
+### Services
+- HttpBin: http://localhost:8080
+- RabbitMQ UI: http://localhost:15672 (guest / guest)
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin / admin)
+
+## Run tests
+All tests:
 ```bash
-pip install -r requirements-messaging.txt
+docker compose run --rm tests pytest
 ```
 
-### 2) Run tests
-
-Allure results:
+Integration tests (RabbitMQ):
 ```bash
-pytest --alluredir=artifacts/allure-results
+docker compose run --rm tests pytest -m integration -vv
 ```
 
-HTML report:
-```bash
-pytest --html=artifacts/report.html --self-contained-html
-```
+## Reports
+- Allure results: artifacts/allure-results
+- HTML report: artifacts/report.html
+- Allure report is published in CI (GitHub Pages)
 
-Both:
-```bash
-pytest --alluredir=artifacts/allure-results --html=artifacts/report.html --self-contained-html
-```
+## Messaging Integration
+- Broker: RabbitMQ
+- Queue: qa.events
+- Test publishes a message and validates its consumption
+- Verified locally and in CI
 
-### 3) View reports
+## Observability
+Custom metrics pushed to Pushgateway:
+- test_duration_seconds
+- test_retries_total
 
-**HTML:** open `artifacts/report.html`.
+### Verification
+- Prometheus targets: http://localhost:9090/targets
+- Grafana dashboard: QA / Tests Metrics
 
-**Allure:**
-```bash
-# requires allure CLI installed on your machine
-allure serve artifacts/allure-results
-```
+## Configuration
+- YAML / .env based configuration
+- Environment variables override defaults
 
----
+## CI
+- Ruff linting
+- Pytest execution
+- Allure and HTML reports as artifacts
 
-## Config
-
-Defaults live in `config/config.yaml`. Any value can be overridden via `.env`:
-
-- `BASE_URL`, `TIMEOUT_S`
-- `RETRY_ATTEMPTS`, `RETRY_BACKOFF_S`, `RETRY_BACKOFF_MULTIPLIER`, `RETRY_ON_STATUSES`
-- `ALLURE_RESULTS_DIR`, `HTML_REPORT_PATH`
-- `METRICS_ENABLED`, `PUSHGATEWAY_URL`, `METRICS_JOB_NAME`
-
----
-
-## Docker (bonus)
-
-From repo root:
-
-```bash
-docker compose -f docker/docker-compose.yml up -d --build
-```
-
-What you get:
-- httpbin on http://localhost:8080
-- RabbitMQ UI on http://localhost:15672 (admin: guest / guest)
-- Prometheus on http://localhost:9090
-- Grafana on http://localhost:3000 (admin/admin)
-- Tests container runs pytest and writes reports into a **Docker named volume** (`artifacts`) to avoid Docker Desktop file-sharing issues on macOS.
-
-To copy reports to the host:
-
-```bash
-docker cp docker-tests-1:/app/artifacts ./artifacts
-```
-
-Grafana includes a provisioned dashboard:
-- Folder: **QA**
-- Dashboard: **QA Tests - Metrics**
-  - Test duration p95 (Prometheus histogram_quantile)
-  - Retry attempts rate
-
----
-
-## Notes (senior-level design choices)
-
-- **Retry**:
-  - retries on network issues + configurable status codes
-  - logs timing and delay for each attempt
-- **Models**:
-  - httpbin responses validated with Pydantic for strong schema checks
-- **Metrics**:
-  - Tests emit Prometheus metrics and push them at session end (never fails build if unavailable)
-
-
-## Test Strategy (QA Automation)
-
-Цель репозитория — показать **QA Automation подход**, а не “dev-tests”:
-
-- **Поведенческие проверки**: корректная обработка ошибок/таймаутов/ретраев (см. `tests/test_resilience_*`).
-- **Контракты**: строгие модели Pydantic (`extra='forbid'`, `UUID4`) — раннее обнаружение breaking changes.
-- **Границы и данные**: спецсимволы/Unicode/размер payload (см. `tests/test_data_boundaries.py`).
-- **Воспроизводимость**: `TEST_SEED` фиксирует генерацию данных; seed прикладывается в Allure.
-- **Управляемость прогона**: маркеры `smoke/regression/resilience/data/integration`.
-
-### Quick run
-
-```bash
-pip install -r requirements.txt
-TEST_SEED=123 pytest --alluredir=artifacts/allure-results --html=artifacts/report.html --self-contained-html
-```
-
-
-## Integration tests (RabbitMQ)
-
-Integration test: `tests/integration/test_messaging_rabbitmq.py`
-
-Install dependency:
-```bash
-pip install -r requirements-messaging.txt
-```
-
-Run RabbitMQ (option 1 — docker compose from repo):
-```bash
-docker compose -f docker/docker-compose.yml up -d rabbitmq
-```
-
-Run integration tests:
-```bash
-export AMQP_URL="amqp://guest:guest@localhost:5672/%2F"
-pytest -m integration
-```
-
-Note: default vhost is `/` and must be URL-encoded as `%2F` in AMQP_URL.
-If RabbitMQ isn't reachable, the integration test will be **skipped** with a clear message (not failed).
+✔ All assignment requirements are implemented and verifiable.
