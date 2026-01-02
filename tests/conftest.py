@@ -1,16 +1,7 @@
 from __future__ import annotations
 
 import os
-import sys
-from pathlib import Path
-import pathlib
-import random
 import pytest
-
-# Ensure repo root is on sys.path for local runs and CI where the package is not installed.
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 from framework.config import load_config
 from framework.http_client import HttpClient
@@ -19,9 +10,9 @@ from framework.metrics import push_metrics, set_current_test_name
 from framework.api.httpbin_api import HttpBinApi
 
 try:
-    import allure
-except Exception:  # pragma: no cover
-    allure = None
+    import pika
+except Exception:
+    pika = None
 
 
 @pytest.fixture(scope="session")
